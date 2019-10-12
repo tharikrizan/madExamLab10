@@ -32,7 +32,14 @@ public class Messages extends AppCompatActivity {
             textViewMessage.setText(cursor.getString(cursor.getColumnIndexOrThrow(Tables.Message.COLUMN_MESSAGE)));
             textViewSubject.setText(cursor.getString(cursor.getColumnIndexOrThrow(Tables.Message.COLUMN_SUBJECT)));
             textViewUser.setText(cursor.getString(cursor.getColumnIndexOrThrow(Tables.Message.COLUMN_USER)));
+
+
         }
+
+            textViewMessage.setText(i.getStringExtra("message"));
+            textViewSubject.setText(i.getStringExtra("Subject"));
+            textViewUser.setText(i.getStringExtra("teacherName"));
+
 
 
     }

@@ -10,11 +10,22 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import database.DBHelper;
 
 public class StudentActivity extends AppCompatActivity {
 
     TextView textViewWelcome;
+    ListView listViewMessages;
+    DBHelper dh;
     private static final String CHANNEL_ID = "chanel1";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +72,45 @@ public class StudentActivity extends AppCompatActivity {
         notificationManager.notify(notificationId, builder.build());
 
         textViewWelcome= (TextView)findViewById(R.id.textViewStudentWelcome);
+
+
+
+        listViewMessages = (ListView)findViewById(R.id.ListViewStudentMeassages);
+
+
+        dh = new DBHelper(getApplicationContext());
+
+        List<Message> mlist = new ArrayList<>();
+
+        mlist = dh.getAllMessage();
+        List<String> userNames=new ArrayList<>();
+        List<String> ID=new ArrayList<>();
+        List<String> messageList=new ArrayList<>();
+
+
+        int j=0;
+
+        for (Message message:mlist){
+
+            userNames.add( "message from :"+message.getUname());
+            ID.add(message.getId());
+            ID.add(message.getMessage());
+        }
+
+        ArrayAdapter<String> stringArrayAdapter = new ArrayAdapter<>(this,R.layout.single_message_list,messageList);
+
+        listViewMessages.setAdapter(stringArrayAdapter);
+
+        listViewMessages.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent1 = new Intent(getApplicationContext(),Messages.class);
+                intent1.putExtra("teacherName",(String)listViewMessages.getItemAtPosition(i));
+                intent1.putExtra("Subject",(String)listViewMessages.getItemAtPosition(i));
+                intent1.putExtra("Message",(String)listViewMessages.getItemAtPosition(i));
+                startActivity(intent1);
+            }
+        });
 
         textViewWelcome.setText("Welcome "+userName);
     }

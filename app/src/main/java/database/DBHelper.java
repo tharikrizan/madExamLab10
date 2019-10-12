@@ -6,6 +6,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.example.exampractice.Message;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class DBHelper extends SQLiteOpenHelper {
 
 
@@ -109,6 +114,27 @@ public class DBHelper extends SQLiteOpenHelper {
      String[] projection = {Tables.Message.COLUMN_USER, Tables.Message.COLUMN_SUBJECT , Tables.Message.COLUMN_MESSAGE};
      Cursor c = db.query(Tables.Message.TABLE_NAME,projection,null,null,null,null,null);
      return c;
+    }
+
+    public List getAllMessage(){
+        SQLiteDatabase db = getReadableDatabase();
+        List<Message> mlist = new ArrayList<>();
+        Message message = new Message();
+        String[] projection = {Tables.Message._ID,Tables.Message.COLUMN_USER, Tables.Message.COLUMN_SUBJECT , Tables.Message.COLUMN_MESSAGE};
+        Cursor c = db.query(Tables.Message.TABLE_NAME,projection,null,null,null,null,null);
+
+        while (c.moveToNext()){
+            message.setId(c.getString(c.getColumnIndexOrThrow(Tables.Message._ID)));
+            message.setMessage(c.getString(c.getColumnIndexOrThrow(Tables.Message.COLUMN_MESSAGE)));
+
+            message.setSubject(c.getString(c.getColumnIndexOrThrow(Tables.Message.COLUMN_SUBJECT)));
+            message.setUname(c.getString(c.getColumnIndexOrThrow(Tables.Message.COLUMN_USER)));
+
+            mlist.add(message);
+        }
+
+
+        return mlist;
     }
 
 }
