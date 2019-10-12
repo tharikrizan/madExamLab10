@@ -54,6 +54,7 @@ public class loginActivity extends AppCompatActivity {
                     }else{
                         Intent intent = new Intent(loginActivity.this , TeacherActivity.class );
                         intent.putExtra("userName",login[0]);
+                        startActivity(intent);
                     }
 
                 }

@@ -71,7 +71,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public String[] login(String username , String password){
 
-        SQLiteDatabase db = getWritableDatabase();
+        SQLiteDatabase db = getReadableDatabase();
         String[] login = {"null","null"};
 
         String[] projection = {Tables.User.COLUMN_TYPE, Tables.User.COLUMN_NAME};
@@ -102,6 +102,13 @@ public class DBHelper extends SQLiteOpenHelper {
         return i;
 
 
+    }
+
+    public Cursor getLatestMessage(){
+     SQLiteDatabase db = getReadableDatabase();
+     String[] projection = {Tables.Message.COLUMN_USER, Tables.Message.COLUMN_SUBJECT , Tables.Message.COLUMN_MESSAGE};
+     Cursor c = db.query(Tables.Message.TABLE_NAME,projection,null,null,null,null,null);
+     return c;
     }
 
 }
