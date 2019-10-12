@@ -94,7 +94,7 @@ public class StudentActivity extends AppCompatActivity {
 
             userNames.add( "message from :"+message.getUname());
             ID.add(message.getId());
-            ID.add(message.getMessage());
+            messageList.add(message.getMessage());
         }
 
         ArrayAdapter<String> stringArrayAdapter = new ArrayAdapter<>(this,R.layout.single_message_list,messageList);
