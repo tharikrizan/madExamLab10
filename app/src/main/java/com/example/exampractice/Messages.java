@@ -28,19 +28,21 @@ public class Messages extends AppCompatActivity {
         dh = new DBHelper(getApplicationContext());
         Cursor cursor = dh.getLatestMessage();
 
-        if(cursor.moveToNext()){
-            textViewMessage.setText(cursor.getString(cursor.getColumnIndexOrThrow(Tables.Message.COLUMN_MESSAGE)));
-            textViewSubject.setText(cursor.getString(cursor.getColumnIndexOrThrow(Tables.Message.COLUMN_SUBJECT)));
-            textViewUser.setText(cursor.getString(cursor.getColumnIndexOrThrow(Tables.Message.COLUMN_USER)));
 
 
-        }
 
-            textViewMessage.setText(i.getStringExtra("message"));
+        if( (i.getStringExtra("from")) != null) {
+            textViewMessage.setText(i.getStringExtra("Message"));
             textViewSubject.setText(i.getStringExtra("Subject"));
             textViewUser.setText(i.getStringExtra("teacherName"));
 
+        }else {
 
+            cursor.moveToNext();
+            textViewMessage.setText(cursor.getString(cursor.getColumnIndexOrThrow(Tables.Message.COLUMN_MESSAGE)));
+            textViewSubject.setText(cursor.getString(cursor.getColumnIndexOrThrow(Tables.Message.COLUMN_SUBJECT)));
+            textViewUser.setText(cursor.getString(cursor.getColumnIndexOrThrow(Tables.Message.COLUMN_USER)));
+        }
 
     }
 }

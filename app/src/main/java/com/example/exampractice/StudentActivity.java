@@ -8,18 +8,21 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import database.DBHelper;
+import database.Tables;
 
 public class StudentActivity extends AppCompatActivity {
 
@@ -53,13 +56,14 @@ public class StudentActivity extends AppCompatActivity {
 
         // Create an explicit intent for an Activity in your app
         Intent intent = new Intent(this, Messages.class);
+        intent.putExtra("notification","noti");
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_launcher_background)
-                .setContentTitle("My notification")
-                .setContentText("Hello World!")
+                .setContentTitle("New Message")
+                .setContentText("click here to view")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 // Set the intent that will fire when the user taps the notification
                 .setContentIntent(pendingIntent)
@@ -82,6 +86,7 @@ public class StudentActivity extends AppCompatActivity {
 
         List<Message> mlist = new ArrayList<>();
 
+
         mlist = dh.getAllMessage();
         List<String> userNames=new ArrayList<>();
         List<String> ID=new ArrayList<>();
@@ -97,11 +102,16 @@ public class StudentActivity extends AppCompatActivity {
             messageList.add(message.getMessage());
         }
 
-        ArrayAdapter<String> stringArrayAdapter = new ArrayAdapter<>(this,R.layout.single_message_list,messageList);
+        String[] projection = {Tables.Message._ID,Tables.Message.COLUMN_USER, Tables.Message.COLUMN_SUBJECT , Tables.Message.COLUMN_MESSAGE};
+        int[] toViews = {R.id.textViewSMLID,R.id.textViewSMLSubject,R.id.textViewSMLmessage,R.id.textViewSMLTeacher};
+        SimpleCursorAdapter simpleCursorAdapter = new SimpleCursorAdapter(this,R.layout.single_message_list,dh.getAllmessagesCursor(),projection,toViews,0);
+        //ArrayAdapter<String> stringArrayAdapter = new ArrayAdapter<>(this,R.layout.single_message_list,messageList);
 
-        listViewMessages.setAdapter(stringArrayAdapter);
+        //listViewMessages.setAdapter(stringArrayAdapter);
 
-        listViewMessages.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listViewMessages.setAdapter(simpleCursorAdapter);
+
+       /* listViewMessages.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Intent intent1 = new Intent(getApplicationContext(),Messages.class);
@@ -111,6 +121,24 @@ public class StudentActivity extends AppCompatActivity {
                 startActivity(intent1);
             }
         });
+        */
+       listViewMessages.setOnItemClickListener(new ListView.OnItemClickListener() {
+           @Override
+           public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+               Cursor c = (Cursor) adapterView.getItemAtPosition(i);
+               Message message= new Message();
+
+               message = dh.getClickedmessage(c.getString(c.getColumnIndexOrThrow(Tables.Message._ID)));
+
+               Intent intent1 = new Intent(getApplicationContext(),Messages.class);
+               intent1.putExtra("Message", message.getMessage() );
+               intent1.putExtra("Subject", message.getSubject() );
+               intent1.putExtra("teacherName", message.getUname() );
+               intent1.putExtra("from","item");
+               startActivity(intent1);
+
+           }
+       });
 
         textViewWelcome.setText("Welcome "+userName);
     }

@@ -112,7 +112,8 @@ public class DBHelper extends SQLiteOpenHelper {
     public Cursor getLatestMessage(){
      SQLiteDatabase db = getReadableDatabase();
      String[] projection = {Tables.Message.COLUMN_USER, Tables.Message.COLUMN_SUBJECT , Tables.Message.COLUMN_MESSAGE};
-     Cursor c = db.query(Tables.Message.TABLE_NAME,projection,null,null,null,null,null);
+        String orderBY = Tables.Message._ID +" DESC" ;
+     Cursor c = db.query(Tables.Message.TABLE_NAME,projection,null,null,null,null,orderBY);
      return c;
     }
 
@@ -134,7 +135,41 @@ public class DBHelper extends SQLiteOpenHelper {
         }
 
 
+
         return mlist;
+    }
+
+    public Cursor getAllmessagesCursor(){
+        SQLiteDatabase db = getReadableDatabase();
+
+
+        String orderBY = Tables.Message._ID +" DESC" ;
+        String[] projection = {Tables.Message._ID,Tables.Message.COLUMN_USER, Tables.Message.COLUMN_SUBJECT , Tables.Message.COLUMN_MESSAGE};
+        Cursor c = db.query(Tables.Message.TABLE_NAME,projection,null,null,null,null,orderBY);
+        return c;
+    }
+
+    public Message getClickedmessage(String id){
+        SQLiteDatabase db = getReadableDatabase();
+
+        Message message = new Message();
+        String orderBY = Tables.Message._ID +" DESC" ;
+        String[] projection = {Tables.Message._ID,Tables.Message.COLUMN_USER, Tables.Message.COLUMN_SUBJECT , Tables.Message.COLUMN_MESSAGE};
+        String selection = Tables.Message._ID +"=?";
+        String[] selectionArgs ={id};
+        Cursor c = db.query(Tables.Message.TABLE_NAME,projection,selection,selectionArgs,null,null,orderBY);
+
+        if (c.moveToNext()){
+            message.setId(c.getString(c.getColumnIndexOrThrow(Tables.Message._ID)));
+            message.setMessage(c.getString(c.getColumnIndexOrThrow(Tables.Message.COLUMN_MESSAGE)));
+
+            message.setSubject(c.getString(c.getColumnIndexOrThrow(Tables.Message.COLUMN_SUBJECT)));
+            message.setUname(c.getString(c.getColumnIndexOrThrow(Tables.Message.COLUMN_USER)));
+
+            return message;
+        }
+
+        return null;
     }
 
 }
